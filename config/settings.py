@@ -16,7 +16,7 @@ DEBUG = env("DEBUG")
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)_ount%2vrntzu9-2@$cdsy-eswfs7a^*)@ryzrkdsal%1vdi$'
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -121,7 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = env("DJANGO_LANGUAGE_CODE", default="tr-tr")
+LANGUAGE_CODE = env("DJANGO_LANGUAGE_CODE", default="en-us")
 
 TIME_ZONE = env("DJANGO_TIME_ZONE", default="Europe/Istanbul")
 
