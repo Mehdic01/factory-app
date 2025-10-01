@@ -85,7 +85,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': env("DB_NAME"),
+        'USER': env("DB_USER"),
+        'PASSWORD': env("DB_PASSWORD"),
+        'HOST': env("DB_HOST"),
+        'PORT': env("DB_PORT"),
+        "CONN_MAX_AGE": 60,  # nemidoonam in chie
+        "OPTIONS": {
+            # shayad badan lazem beshe:
+            # "connect_timeout": 5,
+        },
     }
 }
 
@@ -112,9 +121,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'tr-tr'
+LANGUAGE_CODE = env("DJANGO_LANGUAGE_CODE", default="tr-tr")
 
-TIME_ZONE = 'Europe/Istanbul'
+TIME_ZONE = env("DJANGO_TIME_ZONE", default="Europe/Istanbul")
 
 USE_I18N = True
 
