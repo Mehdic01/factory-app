@@ -4,10 +4,11 @@
   <div class="px-3">
     <div class="mb-4"><a class="text-decoration-none fw-bold" href="{% url 'dashboard' %}">🏠 Dashboard</a></div>
     <ul class="nav nav-pills flex-column gap-1">
-      <li class="nav-item"><a class="nav-link {% if active=='tasks' %}active{% endif %}" href="{% url 'task_list' %}">🗂️ Tasks</a></li>
-      <li class="nav-item"><a class="nav-link {% if active=='ann' %}active{% endif %}" href="{% url 'announcement_list' %}">📢 Announcements</a></li>
-      <li class="nav-item"><a class="nav-link {% if active=='res' %}active{% endif %}" href="{% url 'booking_list' %}">🚗/🏢 Reservations</a></li>
-      <li class="nav-item"><a class="nav-link {% if active=='fb' %}active{% endif %}" href="{% url 'feedback_list' %}">💬 Feedback</a></li>
+    <a class="nav-link {% if active == 'tasks' %}active{% endif %}" href="{% url 'task_list' %}">🗂️ Tasks</a>
+    <a class="nav-link {% if active == 'ann' %}active{% endif %}" href="{% url 'announcement_list' %}">📢 Announcements</a>
+    <a class="nav-link {% if active == 'res' %}active{% endif %}" href="{% url 'booking_list' %}">🚗/🏢 Reservations</a>
+    <a class="nav-link {% if active == 'fb' %}active{% endif %}" href="{% url 'feedback_list' %}">💬 Feedback</a>
+
     </ul>
     <hr>
     <div class="d-grid gap-2">
