@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="sidebar position-fixed top-0 start-0 vh-100 bg-white border-end pt-5">
+  <div class="px-3">
+    <div class="mb-4"><a class="text-decoration-none fw-bold" href="{% url 'dashboard' %}">🏠 Dashboard</a></div>
+    <ul class="nav nav-pills flex-column gap-1">
+      <li class="nav-item"><a class="nav-link {% if active=='tasks' %}active{% endif %}" href="{% url 'task_list' %}">🗂️ Tasks</a></li>
+      <li class="nav-item"><a class="nav-link {% if active=='ann' %}active{% endif %}" href="{% url 'announcement_list' %}">📢 Announcements</a></li>
+      <li class="nav-item"><a class="nav-link {% if active=='res' %}active{% endif %}" href="{% url 'booking_list' %}">🚗/🏢 Reservations</a></li>
+      <li class="nav-item"><a class="nav-link {% if active=='fb' %}active{% endif %}" href="{% url 'feedback_list' %}">💬 Feedback</a></li>
+    </ul>
+    <hr>
+    <div class="d-grid gap-2">
+      <a class="btn btn-outline-secondary btn-sm" href="#">👤 Profile</a>
+      <a class="btn btn-outline-danger btn-sm" href="{% url 'logout' %}">🚪 Logout</a>
+    </div>
+
+    {% if user.role == "MANAGER" or user.role == "GM" %}
+      <hr>
+      <div class="small text-uppercase text-muted">Manager Tools</div>
+      <ul class="nav flex-column gap-1 mt-2">
+        <li class="nav-item"><a class="nav-link" href="#">+ Yeni Duyuru</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Şikayet/Öneri Kutusu</a></li>
+      </ul>
+    {% endif %}
+  </div>
+</div>
+
+<div class="content container-fluid py-4">
+  {% block content %}{% endblock %}
+</div>
+{% endblock %}
