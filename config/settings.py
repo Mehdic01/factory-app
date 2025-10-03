@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'tasks',
     'comms',
     'feedbacks',
+    'departments',
 ]
 
 MIDDLEWARE = [
