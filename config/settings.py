@@ -150,3 +150,41 @@ LOGIN_REDIRECT_URL = "dashboard"
 # Crispy
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# Email
+import os
+
+USE_SMTP = os.getenv("EMAIL_USE_SMTP", "0") in ("1", "true", "True")
+
+if USE_SMTP:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_TIMEOUT = 15
+
+    # Pick ONE provider and set creds via env vars
+    # Gmail (2FA + App Password required)
+    EMAIL_HOST = "smtp.gmail.com"
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+    # Outlook/Microsoft 365 (SMTP AUTH must be enabled)
+    # EMAIL_HOST = "smtp.office365.com"
+    # EMAIL_PORT = 587
+    # EMAIL_USE_TLS = True
+    # EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+    # EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+    # DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+    # Yahoo (2FA + App Password)
+    # EMAIL_HOST = "smtp.mail.yahoo.com"
+    # EMAIL_PORT = 587
+    # EMAIL_USE_TLS = True
+    # EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+    # EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+    # DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+else:
+    # Dev: prints email content to the terminal, does NOT send
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    DEFAULT_FROM_EMAIL = "no-reply@example.com"

@@ -13,7 +13,10 @@
     <hr>
     <div class="d-grid gap-2">
       <a class="btn btn-outline-secondary btn-sm" href="#">👤 Profile</a>
-      <a class="btn btn-outline-danger btn-sm" href="{% url 'logout' %}">🚪 Logout</a>
+      <form method="post" action="{% url 'core:logout' %}">
+        {% csrf_token %}
+        <button class="btn btn-outline-danger btn-sm" type="submit">🚪 Logout</button>
+      </form>
     </div>
 
     {% if user.role == "MANAGER" or user.role == "GM" %}
