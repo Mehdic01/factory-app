@@ -47,7 +47,7 @@ class CorePasswordResetDoneView(PasswordResetDoneView):
 class CorePasswordResetConfirmView(PasswordResetConfirmView):
     template_name = "auth/password_reset_confirm.html"
     success_url = reverse_lazy("core:password_reset_complete")
-    post_reset_login = True
+    post_reset_login = False
     post_reset_login_backend = "django.contrib.auth.backends.ModelBackend"
 
 

@@ -144,8 +144,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Auth
 AUTH_USER_MODEL = "core.User"
-LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "dashboard"
+LOGIN_URL = "core:login"              # was 'login' or missing
+LOGIN_REDIRECT_URL = "dashboard"      # adjust if you use a namespaced dashboard
+LOGOUT_REDIRECT_URL = "core:login"
 
 # Crispy
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
