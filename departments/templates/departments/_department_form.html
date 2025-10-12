@@ -1,0 +1,9 @@
+{% load crispy_forms_tags %}
+<form method="post" hx-post="{{ request.path }}" hx-target="#modal-body" hx-swap="outerHTML">
+  {% csrf_token %}
+  {{ form|crispy }}
+  <div class="d-flex gap-2">
+    <button class="btn btn-primary btn-sm">Save</button>
+    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+  </div>
+</form>

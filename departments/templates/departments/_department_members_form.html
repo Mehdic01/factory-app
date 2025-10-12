@@ -1,0 +1,71 @@
+{% load crispy_forms_tags %}
+<div class="row g-3">
+  <div class="col-12">
+    <h5 class="mb-0">Members for {{ dep.name }}</h5>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header py-2"><strong>Department's current members</strong></div>
+      <div class="card-body p-2">
+        {% if current_members %}
+        <ul class="list-group list-group-flush">
+          {% for u in current_members %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ u.get_full_name|default:u.username }}</span>
+            <form method="post" hx-post="{{ request.path }}" hx-target="#modal-body" hx-swap="outerHTML" class="m-0">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="remove">
+              <input type="hidden" name="user_id" value="{{ u.id }}">
+              <input type="hidden" name="pending_add" value="{{ pending_add|join:',' }}">
+              <input type="hidden" name="pending_remove" value="{{ pending_remove|join:',' }}">
+              <button class="btn btn-outline-danger btn-sm">Remove</button>
+            </form>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="text-muted">No current members.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header py-2"><strong>Available members</strong></div>
+      <div class="card-body p-2">
+        {% if available_members %}
+        <ul class="list-group list-group-flush">
+          {% for u in available_members %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ u.get_full_name|default:u.username }}</span>
+            <form method="post" hx-post="{{ request.path }}" hx-target="#modal-body" hx-swap="outerHTML" class="m-0">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="add">
+              <input type="hidden" name="user_id" value="{{ u.id }}">
+              <input type="hidden" name="pending_add" value="{{ pending_add|join:',' }}">
+              <input type="hidden" name="pending_remove" value="{{ pending_remove|join:',' }}">
+              <button class="btn btn-success btn-sm">Assign to department</button>
+            </form>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="text-muted">No available members.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 d-flex gap-2">
+    <form method="post" hx-post="{{ request.path }}" hx-target="#modal-body" hx-swap="outerHTML" class="m-0">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="save">
+      <input type="hidden" name="pending_add" value="{{ pending_add|join:',' }}">
+      <input type="hidden" name="pending_remove" value="{{ pending_remove|join:',' }}">
+      <button class="btn btn-primary btn-sm">Save</button>
+    </form>
+    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+{% extends "dashboard_base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>Departments</h4>
+  <a class="btn btn-primary btn-sm" href="{% url 'department_create' %}">+ New</a>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-sm align-middle mb-0">
+      <thead><tr>
+        <th>Name</th><th class="text-center">Managers</th><th class="text-center">Members</th><th></th>
+      </tr></thead>
+      <tbody>
+      {% for d in departments %}
+        <tr>
+          <td>{{ d.name }}</td>
+          <td class="text-center">{{ d.managers_count }}</td>
+          <td class="text-center">{{ d.members_count }}</td>
+          <td class="text-end">
+            <div class="btn-group btn-group-sm">
+            <a class="btn btn-outline-secondary"
+              href="{% url 'department_edit' d.pk %}">Edit</a>
+            <a class="btn btn-outline-secondary"
+              href="{% url 'department_managers' d.pk %}">Managers</a>
+            <a class="btn btn-outline-secondary"
+              href="{% url 'department_members' d.pk %}">Members</a>
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4" class="text-muted">No departments.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{# Modal #}
+<div class="modal fade" id="modal" tabindex="-1">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Department</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+    <div id="modal-body" class="modal-body">
+      <div class="text-center text-muted">Loading…</div>
+    </div>
+  </div></div>
+</div>
+{% endblock %}
+

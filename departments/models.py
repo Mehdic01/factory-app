@@ -15,7 +15,7 @@ class Department(models.Model):
         ordering = ['name']
     
     def __str__(self):
-        return super().name
+        return self.name
     
     @property
     def members_count(self):

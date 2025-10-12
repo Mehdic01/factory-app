@@ -13,4 +13,5 @@ urlpatterns = [
     path("announcements/", include("comms.urls")),
     path("bookings/", include("booking.urls")),
     path("feedbacks/", include("feedbacks.urls")),
+    path("departments/", include("departments.urls")),
 ]
