@@ -1,8 +1,141 @@
 {% extends "dashboard_base.html" %}
 {% block content %}
-    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Announcements</h4>
-        <a class="btn btn-primary btn-sm">+ New Announcement</a>
+                    {% if request.user.role == 'MANAGER' or request.user.role == 'GM' %}
+                    <a class="btn btn-primary btn-sm" href="{% url 'announcement_create' %}">+ New Announcement</a>
+        {% endif %}
     </div>
-    <div class="card p-3">Announcement list comes here…</div>
+
+        {% if is_manager %}
+            <h5 class="mb-2">My Announcements</h5>
+            {% if my_announcements %}
+                <div class="list-group mb-4">
+                    {% for a in my_announcements %}
+                        <div class="list-group-item list-group-item-action py-3">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div>
+                                    <a href="{% url 'announcement_detail' a.slug %}" class="h6 mb-1 d-block text-decoration-none">{{ a.title }}</a>
+                                    <small class="text-muted">
+                                        {% if a.pinned %}<span class="badge bg-warning text-dark me-2">Pinned</span>{% endif %}
+                                        {% if a.publish_at %}Published {{ a.publish_at|date:'Y-m-d H:i' }}{% else %}Published{% endif %}
+                                        by {{ a.author|default:'System' }}
+                                        • {% with depts=a.departments.all %}
+                                            {% if depts|length > 0 %}
+                                                Targeted Department:
+                                                {% for d in depts %}
+                                                    {{ d.name }}{% if not forloop.last %}, {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                Global
+                                            {% endif %}
+                                        {% endwith %}
+                                    </small>
+                                </div>
+                            </div>
+                            <p class="mb-0 mt-2 text-muted">{{ a.content|truncatechars:160 }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-secondary">You haven't published any announcements yet.</div>
+            {% endif %}
+
+            <h5 class="mb-2">General Manager's Announcements</h5>
+            {% if gm_announcements %}
+                <div class="list-group">
+                    {% for a in gm_announcements %}
+                        <div class="list-group-item list-group-item-action py-3">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div>
+                                    <a href="{% url 'announcement_detail' a.slug %}" class="h6 mb-1 d-block text-decoration-none">{{ a.title }}</a>
+                                    <small class="text-muted">
+                                        {% if a.pinned %}<span class="badge bg-warning text-dark me-2">Pinned</span>{% endif %}
+                                        {% if a.publish_at %}Published {{ a.publish_at|date:'Y-m-d H:i' }}{% else %}Published{% endif %}
+                                        by {{ a.author|default:'System' }}
+                                        • {% with depts=a.departments.all %}
+                                            {% if depts|length > 0 %}
+                                                Targeted Department:
+                                                {% for d in depts %}
+                                                    {{ d.name }}{% if not forloop.last %}, {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                Global
+                                            {% endif %}
+                                        {% endwith %}
+                                    </small>
+                                </div>
+                                <div id="read-btn-{{ a.id }}">
+                                    {% if a.id in read_ids %}
+                                        {% include 'comms/_read_button.html' with announcement=a is_read=True %}
+                                    {% else %}
+                                        {% include 'comms/_read_button.html' with announcement=a is_read=False %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <p class="mb-0 mt-2 text-muted">{{ a.content|truncatechars:160 }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">No GM announcements for your departments right now.</div>
+            {% endif %}
+
+        {% else %}
+                {% if page_obj.object_list %}
+                        <div class="list-group">
+                                {% for a in page_obj.object_list %}
+                                        <div class="list-group-item list-group-item-action py-3">
+                                                <div class="d-flex w-100 justify-content-between align-items-start">
+                                                        <div>
+                                                                <a href="{% url 'announcement_detail' a.slug %}" class="h6 mb-1 d-block text-decoration-none">{{ a.title }}</a>
+                                                                                                <small class="text-muted">
+                                                                        {% if a.pinned %}<span class="badge bg-warning text-dark me-2">Pinned</span>{% endif %}
+                                                                        {% if a.publish_at %}Published {{ a.publish_at|date:'Y-m-d H:i' }}{% else %}Published{% endif %}
+                                                                        by {{ a.author|default:'System' }}
+                                                                                                        • {% with depts=a.departments.all %}
+                                                                                                                {% if depts|length > 0 %}
+                                                                                                                        Targeted Department:
+                                                                                                                        {% for d in depts %}
+                                                                                                                                {{ d.name }}{% if not forloop.last %}, {% endif %}
+                                                                                                                        {% endfor %}
+                                                                                                                {% else %}
+                                                                                                                        Global
+                                                                                                                {% endif %}
+                                                                                                        {% endwith %}
+                                                                </small>
+                                                        </div>
+
+                                                                                <div id="read-btn-{{ a.id }}">
+                                                                                        {% if a.id in read_ids %}
+                                                                                                {% include 'comms/_read_button.html' with announcement=a is_read=True %}
+                                                                                        {% else %}
+                                                                                                {% include 'comms/_read_button.html' with announcement=a is_read=False %}
+                                                                                        {% endif %}
+                                                                                </div>
+                                                </div>
+                                                <p class="mb-0 mt-2 text-muted">{{ a.content|truncatechars:160 }}</p>
+                                        </div>
+                                {% endfor %}
+                        </div>
+
+                        <nav class="mt-3" aria-label="Pagination">
+                                <ul class="pagination mb-0">
+                                        {% if page_obj.has_previous %}
+                                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                                        {% else %}
+                                                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                                        {% endif %}
+                                        <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+                                        {% if page_obj.has_next %}
+                                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                                        {% else %}
+                                                <li class="page-item disabled"><span class="page-link">Next</span></li>
+                                        {% endif %}
+                                </ul>
+                        </nav>
+                {% else %}
+                        <div class="alert alert-info">No announcements right now.</div>
+                {% endif %}
+        {% endif %}
 {% endblock %}

@@ -1,0 +1,12 @@
+{% if is_read %}
+<button class="btn btn-outline-secondary btn-sm" disabled title="Already read">Read</button>
+{% else %}
+<form method="post"
+      action="{% url 'announcement_mark_read' announcement.slug %}"
+      hx-post="{% url 'announcement_mark_read' announcement.slug %}"
+      hx-target="#read-btn-{{ announcement.id }}"
+      hx-swap="outerHTML">
+  {% csrf_token %}
+  <button class="btn btn-success btn-sm" type="submit">I read this</button>
+</form>
+{% endif %}
