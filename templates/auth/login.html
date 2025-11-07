@@ -1,12 +1,68 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags %}
+
 {% block body %}
-<div class="container py-5" style="max-width:420px">
-  <h4 class="mb-3">Giriş</h4>
-  <form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button class="btn btn-primary w-100 mt-2">Login</button>
-  </form>
+<div class="container py-5" style="max-width: 420px;">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h4 class="mb-3 text-center">Login</h4>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} mb-3">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger mb-3">
+          {% for err in form.non_field_errors %}{{ err }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label for="id_username" class="form-label">Email address</label>
+          {% if form.username.errors %}
+            <div class="text-danger small mb-1">
+              {% for err in form.username.errors %}{{ err }}{% endfor %}
+            </div>
+          {% endif %}
+          <input
+            type="email"
+            name="username"
+            id="id_username"
+            class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+            autocomplete="email"
+            required
+            autofocus
+            value="{{ form.username.value|default_if_none:'' }}"
+          >
+        </div>
+
+        <div class="mb-3">
+          <label for="id_password" class="form-label">Password</label>
+          {% if form.password.errors %}
+            <div class="text-danger small mb-1">
+              {% for err in form.password.errors %}{{ err }}{% endfor %}
+            </div>
+          {% endif %}
+          <input
+            type="password"
+            name="password"
+            id="id_password"
+            class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary">Log in</button>
+          <a class="btn btn-link" href="{% url 'core:password_reset' %}">Forgot password?</a>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

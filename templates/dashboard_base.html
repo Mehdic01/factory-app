@@ -4,17 +4,46 @@
   <div class="px-3">
     <div class="mb-4"><a class="text-decoration-none fw-bold" href="{% url 'dashboard' %}">🏠 Dashboard</a></div>
     <ul class="nav nav-pills flex-column gap-1">
+
     <a class="nav-link {% if active == 'tasks' %}active{% endif %}" href="{% url 'task_list' %}">🗂️ Tasks</a>
     <a class="nav-link {% if active == 'ann' %}active{% endif %}" href="{% url 'announcement_list' %}">📢 Announcements</a>
     <a class="nav-link {% if active == 'res' %}active{% endif %}" href="{% url 'booking_list' %}">🚗/🏢 Reservations</a>
     <a class="nav-link {% if active == 'fb' %}active{% endif %}" href="{% url 'feedback_list' %}">💬 Feedback</a>
     <a class="nav-link {% if active == 'core' %}active{% endif %}" href="{% url 'department_list' %}">🏢 Departments</a>
 
+
+
+      <!-- Reservations dropdown -->
+      <a
+        class="nav-link d-flex justify-content-between align-items-center {% if active == 'res' %}active{% endif %}"
+        role="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#reservationsMenu"
+        aria-controls="reservationsMenu"
+        aria-expanded="{% if active == 'res' %}true{% else %}false{% endif %}"
+      >
+        🚗/🏢 Reservations
+      </a>
+      <div class="collapse {% if active == 'res' %}show{% endif %}" id="reservationsMenu">
+        <ul class="nav flex-column ms-3 my-2 gap-1">
+          <li class="nav-item">
+            <a class="nav-link {% if category == 'cars' %}active{% endif %}" href="{% url 'booking_list' %}?type=cars">Vehicles</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if category == 'rooms' %}active{% endif %}" href="{% url 'booking_list' %}?type=rooms">Rooms</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="nav-link {% if active == 'fb' %}active{% endif %}" href="{% url 'feedback_list' %}">💬 Feedback</a>
     </ul>
     <hr>
     <div class="d-grid gap-2">
       <a class="btn btn-outline-secondary btn-sm" href="#">👤 Profile</a>
-      <a class="btn btn-outline-danger btn-sm" href="{% url 'logout' %}">🚪 Logout</a>
+      <form method="post" action="{% url 'core:logout' %}">
+        {% csrf_token %}
+        <button class="btn btn-outline-danger btn-sm" type="submit">🚪 Logout</button>
+      </form>
     </div>
 
     {% if user.role == "MANAGER" or user.role == "GM" %}
