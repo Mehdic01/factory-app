@@ -1,51 +1,22 @@
 {% extends "base.html" %}
 {% block body %}
-<div class="sidebar position-fixed top-0 start-0 vh-100 bg-white border-end pt-5">
+<div class="sidebar d-none d-lg-block position-fixed top-0 start-0 vh-100 bg-white border-end pt-5">
   <div class="px-3">
     <div class="mb-4"><a class="text-decoration-none fw-bold" href="{% url 'dashboard' %}">🏠 Dashboard</a></div>
     <ul class="nav nav-pills flex-column gap-1">
-
-    <a class="nav-link {% if active == 'tasks' %}active{% endif %}" href="{% url 'task_list' %}">🗂️ Tasks</a>
-    <a class="nav-link {% if active == 'ann' %}active{% endif %}" href="{% url 'announcement_list' %}">📢 Announcements</a>
-    <a class="nav-link {% if active == 'res' %}active{% endif %}" href="{% url 'booking_list' %}">🚗/🏢 Reservations</a>
-    <a class="nav-link {% if active == 'fb' %}active{% endif %}" href="{% url 'feedback_list' %}">💬 Feedback</a>
-    <a class="nav-link {% if active == 'core' %}active{% endif %}" href="{% url 'department_list' %}">🏢 Departments</a>
-
-
-
-      <!-- Reservations dropdown -->
-      <a
-        class="nav-link d-flex justify-content-between align-items-center {% if active == 'res' %}active{% endif %}"
-        role="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#reservationsMenu"
-        aria-controls="reservationsMenu"
-        aria-expanded="{% if active == 'res' %}true{% else %}false{% endif %}"
-      >
-        🚗/🏢 Reservations
-      </a>
-      <div class="collapse {% if active == 'res' %}show{% endif %}" id="reservationsMenu">
-        <ul class="nav flex-column ms-3 my-2 gap-1">
-          <li class="nav-item">
-            <a class="nav-link {% if category == 'cars' %}active{% endif %}" href="{% url 'booking_list' %}?type=cars">Vehicles</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if category == 'rooms' %}active{% endif %}" href="{% url 'booking_list' %}?type=rooms">Rooms</a>
-          </li>
-        </ul>
-      </div>
-
+      <a class="nav-link {% if active == 'tasks' %}active{% endif %}" href="{% url 'task_list' %}">🗂️ Tasks</a>
+      <a class="nav-link {% if active == 'ann' %}active{% endif %}" href="{% url 'announcement_list' %}">📢 Announcements</a>
+      <a class="nav-link {% if active == 'res' %}active{% endif %}" href="{% url 'booking_home' %}">🚗/🏢 Reservations</a>
+      <a class="nav-link {% if category == 'cars' %}active{% endif %}" href="{% url 'booking_vehicles' %}">Vehicles</a>
+      <a class="nav-link {% if category == 'rooms' %}active{% endif %}" href="{% url 'booking_rooms' %}">Rooms</a>
       <a class="nav-link {% if active == 'fb' %}active{% endif %}" href="{% url 'feedback_list' %}">💬 Feedback</a>
+      <a class="nav-link {% if active == 'core' %}active{% endif %}" href="{% url 'department_list' %}">🏢 Departments</a>
     </ul>
     <hr>
     <div class="d-grid gap-2">
       <a class="btn btn-outline-secondary btn-sm" href="#">👤 Profile</a>
-      <form method="post" action="{% url 'core:logout' %}">
-        {% csrf_token %}
-        <button class="btn btn-outline-danger btn-sm" type="submit">🚪 Logout</button>
-      </form>
+      <form method="post" action="{% url 'core:logout' %}">{% csrf_token %}<button class="btn btn-outline-danger btn-sm" type="submit">🚪 Logout</button></form>
     </div>
-
     {% if user.role == "MANAGER" or user.role == "GM" %}
       <hr>
       <div class="small text-uppercase text-muted">Manager Tools</div>
@@ -57,7 +28,35 @@
   </div>
 </div>
 
-<div class="content container-fluid py-4">
-  {% block content %}{% endblock %}
+<div class="content">
+  <nav class="navbar navbar-expand navbar-light bg-white border-bottom mb-3">
+    <div class="container-fluid">
+      <span class="navbar-text me-auto">Welcome, <strong>{{ user.get_full_name|default:user.username }}</strong> <span class="badge bg-secondary">{{ user.get_role_display }}</span></span>
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width:32px;height:32px;font-size:14px;">{{ user.first_name.0|default:user.username.0|upper }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+            <li><a class="dropdown-item" href="#">👤 Profile</a></li>
+            <li><a class="dropdown-item" href="#">⚙️ Settings</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><form method="post" action="{% url 'core:logout' %}" class="px-3">{% csrf_token %}<button type="submit" class="dropdown-item text-danger">🚪 Logout</button></form></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container-fluid py-4">
+    {% if messages %}
+      {% for message in messages %}
+        {% with level=message.tags %}
+          <div class="alert alert-{% if level == 'error' %}danger{% else %}{{ level }}{% endif %} alert-dismissible fade show auto-dismiss mb-3" role="alert" data-timeout="4000">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+        {% endwith %}
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </div>
 </div>
 {% endblock %}

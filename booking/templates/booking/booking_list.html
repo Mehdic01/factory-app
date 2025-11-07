@@ -1,8 +1,102 @@
 {% extends "dashboard_base.html" %}
+
 {% block content %}
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>Bookings</h4>
-        <a class="btn btn-primary btn-sm">+ New Booking</a>
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h4 class="m-0">{% if category == 'rooms' %}Book a Room{% else %}Book a Vehicle{% endif %}</h4>
+</div>
+
+{% if category == 'rooms' %}
+  {% if form and form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  <form method="get" class="row g-3 align-items-end mb-3">
+    <!-- Date + All day -->
+    <div class="col-12 col-md-6 col-lg-3">
+      <label for="id_date" class="form-label">Date</label>
+      <input type="date" class="form-control" id="id_date" name="date" value="{{ date }}" min="{{ today }}">
+      <div class="form-check mt-2">
+        <input class="form-check-input" type="checkbox" id="id_all_day" name="all_day" {% if request.GET.all_day %}checked{% endif %}>
+        <label class="form-check-label" for="id_all_day">All day</label>
+      </div>
     </div>
-    <div class="card p-3">Booking list comes here…</div>
+
+    <!-- Time range -->
+    <div class="col-6 col-md-3 col-lg-2">
+      <label for="id_start_time" class="form-label">Start</label>
+      <input type="time" class="form-control" id="id_start_time" name="start_time" value="{{ start_time }}">
+    </div>
+    <div class="col-6 col-md-3 col-lg-2">
+      <label for="id_end_time" class="form-label">End</label>
+      <input type="time" class="form-control" id="id_end_time" name="end_time" value="{{ end_time }}">
+    </div>
+
+    <!-- Room size -->
+    <div class="col-6 col-md-3 col-lg-2">
+      <label for="id_size" class="form-label">Room size</label>
+      <select class="form-select" id="id_size" name="size">
+        <option value="">Any</option>
+        {% for val, label in size_options %}
+          <option value="{{ val }}" {% if size == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Room category -->
+    <div class="col-6 col-md-6 col-lg-3">
+      <label for="id_room_category" class="form-label">Room category</label>
+      <select class="form-select" id="id_room_category" name="room_category">
+        <option value="">Any</option>
+        {% for val, label in room_category_options %}
+          <option value="{{ val }}" {% if room_category == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Buttons -->
+    <div class="col-12 col-md-6 col-lg-12 d-flex gap-2">
+      <button type="submit" class="btn btn-primary flex-grow-1">Search</button>
+      <a class="btn btn-outline-secondary" href="{% url 'booking_rooms' %}">Reset</a>
+    </div>
+  </form>
+
+  <script>
+    (function () {
+      const cb = document.getElementById('id_all_day');
+      const s = document.getElementById('id_start_time');
+      const e = document.getElementById('id_end_time');
+      function sync() {
+        const d = cb && cb.checked;
+        if (s) s.disabled = d;
+        if (e) e.disabled = d;
+      }
+      if (cb) { cb.addEventListener('change', sync); sync(); }
+    })();
+  </script>
+{% endif %}
+
+<hr class="my-4">
+
+{% if category == 'rooms' %}
+  {% if results %}
+    <div class="list-group">
+      {% for room in results %}
+        <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+          <div>
+            <h6 class="mb-1">{{ room.name }}</h6>
+            <small class="text-muted">{{ room.location }} • {{ room.capacity }} ppl • {{ room.get_category_display }}</small>
+          </div>
+          <a class="btn btn-sm btn-outline-primary"
+             href="{% url 'booking_room_create' room.id %}?date={{ date }}&start_time={{ start_time }}&end_time={{ end_time }}">
+            Book
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info m-0">No rooms found for the selected filters.</div>
+  {% endif %}
+{% else %}
+  <div class="alert alert-secondary m-0">Vehicles booking is not implemented yet.</div>
+{% endif %}
 {% endblock %}

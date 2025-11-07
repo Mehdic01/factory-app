@@ -1,0 +1,40 @@
+{% extends "dashboard_base.html" %}
+
+{% block content %}
+<h4 class="mb-3">Book {{ room.name }}</h4>
+
+<form method="post" class="row gy-3 gx-3">
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+    <div class="col-12">
+      <div class="alert alert-danger">
+        {% for err in form.non_field_errors %}{{ err }}{% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="col-12">
+    <label class="form-label">Title (optional)</label>
+    <input type="text" name="title" class="form-control" value="{{ form.initial.title|default:'' }}">
+  </div>
+
+  <div class="col-12 col-md-4">
+    <label class="form-label">Date</label>
+    <input type="date" name="date" class="form-control" value="{{ form.initial.date|default:'' }}">
+  </div>
+  <div class="col-6 col-md-4">
+    <label class="form-label">Start</label>
+    <input type="time" name="start_time" class="form-control" value="{{ form.initial.start_time|default:'' }}">
+  </div>
+  <div class="col-6 col-md-4">
+    <label class="form-label">End</label>
+    <input type="time" name="end_time" class="form-control" value="{{ form.initial.end_time|default:'' }}">
+  </div>
+
+  <div class="col-12">
+    <button class="btn btn-primary" type="submit">Confirm booking</button>
+    <a class="btn btn-outline-secondary" href="{% url 'booking_rooms' %}">Cancel</a>
+  </div>
+</form>
+{% endblock %}
